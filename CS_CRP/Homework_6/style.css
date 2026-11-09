@@ -1,0 +1,910 @@
+/* ==========================================================================
+   Catch Game — Stage 2 (Visual Vibe) Stylesheet
+   Theme: Colourful, Cheerful Cartoon Sky
+   CSS shapes, gradients, emojis & inline SVG only. Zero external assets.
+   ========================================================================== */
+
+:root {
+  --arena-width: 480px;
+  --arena-height: 640px;
+  --basket-width: 90px;
+  --basket-height: 38px;
+
+  /* Sky Gradient */
+  --sky-top: #5BC8FF;      /* bright cerulean */
+  --sky-mid: #87DFFF;      /* lighter midpoint */
+  --sky-bottom: #C8F0FF;   /* pale horizon haze */
+
+  /* HUD */
+  --hud-bg: rgba(255, 240, 100, 0.92); /* sunny yellow strip */
+  --hud-text: #5B2D00;                   /* warm dark brown */
+  --hud-border: #FFAA00;
+
+  /* Accent & Interaction */
+  --accent-color: #FF6B35;   /* tangerine orange */
+  --accent-hover: #E55A25;
+  --danger-color: #FF3B30;
+  --success-color: #34C759;
+
+  /* Overlay & Cards */
+  --overlay-bg: rgba(10, 60, 120, 0.65); /* deep sky blue dim */
+  --card-bg: rgba(255, 255, 255, 0.97);
+  --card-border: #FFD700;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #0d1e3a;
+  color: #1e293b;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.game-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ==========================================================================
+   Arena & Sky Canvas
+   ========================================================================== */
+.game-arena {
+  position: relative;
+  width: var(--arena-width);
+  max-width: 100%;
+  height: var(--arena-height);
+  background: linear-gradient(
+    to bottom,
+    var(--sky-top) 0%,
+    var(--sky-mid) 50%,
+    var(--sky-bottom) 100%
+  );
+  border-radius: 16px;
+  border: 3px solid #FFD700;   /* golden cartoon outline */
+  box-shadow:
+    0 0 0 5px #FF9500,          /* orange outer ring */
+    0 24px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Background Scenery Layer (z-index: 1)
+   ========================================================================== */
+.sky-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* 3a. White Puffy Clouds */
+.cloud {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+  opacity: 0.88;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
+  pointer-events: none;
+}
+
+.cloud::before,
+.cloud::after {
+  content: '';
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+}
+
+/* Cloud 1 — large, upper-left */
+.cloud-1 {
+  width: 110px;
+  height: 44px;
+  top: 80px;
+  left: 20px;
+  animation: drift 18s linear infinite;
+  will-change: transform;
+}
+.cloud-1::before { width: 70px; height: 60px; top: -34px; left: 14px; }
+.cloud-1::after  { width: 50px; height: 46px; top: -22px; left: 54px; }
+
+/* Cloud 2 — medium, upper-right */
+.cloud-2 {
+  width: 90px;
+  height: 36px;
+  top: 140px;
+  right: 30px;
+  animation: drift 24s linear infinite reverse;
+  will-change: transform;
+}
+.cloud-2::before { width: 55px; height: 48px; top: -28px; left: 10px; }
+.cloud-2::after  { width: 40px; height: 38px; top: -18px; left: 40px; }
+
+/* Cloud 3 — small, mid-left */
+.cloud-3 {
+  width: 70px;
+  height: 28px;
+  top: 300px;
+  left: -10px;
+  animation: drift 30s linear infinite;
+  will-change: transform;
+}
+.cloud-3::before { width: 44px; height: 38px; top: -22px; left: 8px; }
+.cloud-3::after  { width: 34px; height: 30px; top: -14px; left: 32px; }
+
+@keyframes drift {
+  from { transform: translateX(-20px); }
+  to   { transform: translateX(30px); }
+}
+
+/* 3b. Deco Sun */
+.deco-sun {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  top: 60px;
+  right: 24px;
+  pointer-events: none;
+}
+
+.sun-rays {
+  animation: spin-slow 12s linear infinite;
+  transform-origin: 40px 40px;
+  will-change: transform;
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+/* 3c. Deco Rainbow */
+.deco-rainbow {
+  position: absolute;
+  width: 200px;
+  height: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 160px;    /* above the basket zone */
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* 3d. Crow Silhouettes */
+.crow {
+  position: absolute;
+  opacity: 0.55;
+  pointer-events: none;
+  will-change: transform, left;
+}
+.crow-1 { width: 36px; top: 170px; animation: flyAcross 14s linear infinite; }
+.crow-2 { width: 24px; top: 230px; animation: flyAcross 20s linear infinite 5s; }
+.crow-3 { width: 18px; top: 380px; animation: flyAcross 10s linear infinite 2s; }
+
+@keyframes flyAcross {
+  from { left: -50px; }
+  to   { left: 530px; }
+}
+
+/* ==========================================================================
+   HUD (Heads-Up Display)
+   ========================================================================== */
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background: linear-gradient(to right, #FFD700, #FFAA00);
+  border-bottom: 3px solid #FF8C00;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  z-index: 20;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  color: #5B2D00;
+  letter-spacing: 0.5px;
+}
+
+.hud-lives {
+  letter-spacing: 2px;
+  font-size: 17px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.hud-score {
+  background: #FF6B35;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(255, 107, 53, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-high-score {
+  background: #A855F7;  /* purple */
+  color: white;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(168, 85, 247, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-btn {
+  background: white;
+  border: 2px solid #FF8C00;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.hud-btn:hover {
+  transform: scale(1.1);
+}
+
+.hud-btn:active {
+  transform: scale(0.9);
+}
+
+/* ==========================================================================
+   Falling Items Container
+   ========================================================================== */
+.items-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.falling-item {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
+  will-change: transform, top, opacity;
+}
+
+/* Bomb pulse / throb glow */
+.falling-item.type-bomb {
+  filter: drop-shadow(0 0 6px rgba(255, 60, 0, 0.8));
+}
+
+/* ==========================================================================
+   Player Basket (Cartoon Wicker Basket)
+   ========================================================================== */
+.basket {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: var(--basket-width);
+  height: var(--basket-height);
+  /* Wicker gradient — warm woven look */
+  background: repeating-linear-gradient(
+    45deg,
+    #C17F24 0px 4px,
+    #E8A83E 4px 8px
+  );
+  border: 3px solid #8B4513;
+  border-radius: 8px 8px 20px 20px;  /* wider bottom -> bucket shape */
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.3),
+    inset 0 2px 6px rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  will-change: transform;
+}
+
+/* Top rim — a rounded bar */
+.basket::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -4px;
+  right: -4px;
+  height: 8px;
+  background: linear-gradient(to right, #A0522D, #D2691E, #A0522D);
+  border-radius: 4px;
+  border: 2px solid #6B3A2A;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Basket gloss shine */
+.basket::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.18) 0%, transparent 60%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.basket-art {
+  font-size: 22px;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Hit Flash & Scale Visual Feedback */
+.basket.hit-good {
+  box-shadow: 0 0 24px #34C759, 0 0 8px #34C759, 0 6px 12px rgba(0, 0, 0, 0.3);
+  border-color: #22A848;
+}
+
+.basket.hit-bad {
+  box-shadow: 0 0 24px #FF3B30, 0 0 8px #FF3B30, 0 6px 12px rgba(0, 0, 0, 0.3);
+  border-color: #CC1F1A;
+}
+
+/* ==========================================================================
+   Sensory Feedback Overlays (Particles, Floats, Ripples)
+   ========================================================================== */
+.fx-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 25;
+  overflow: hidden;
+}
+
+/* Catch Ripple Ring */
+.catch-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: rippleExpand 300ms ease-out forwards;
+}
+
+.catch-ripple.ripple-good {
+  border: 3px solid rgba(52, 199, 89, 0.8);
+  box-shadow: 0 0 10px rgba(52, 199, 89, 0.5);
+}
+
+.catch-ripple.ripple-bad {
+  border: 3px solid rgba(255, 59, 48, 0.85);
+  box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
+}
+
+@keyframes rippleExpand {
+  0% {
+    width: 30px;
+    height: 30px;
+    opacity: 0.8;
+  }
+  100% {
+    width: 65px;
+    height: 65px;
+    opacity: 0;
+  }
+}
+
+/* Sparkle Particle */
+.sparkle-particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  will-change: transform, opacity;
+  box-shadow: 0 0 6px currentColor;
+}
+
+/* Floating Score Popup */
+.score-popup {
+  position: absolute;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 28;
+  animation: scoreFloat 700ms ease-out forwards;
+  will-change: transform, opacity;
+}
+
+.score-popup.score-positive {
+  color: #22c55e;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(34, 197, 94, 0.6);
+}
+
+.score-popup.score-negative {
+  color: #ef4444;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+@keyframes scoreFloat {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  30% {
+    transform: translate(-50%, -15px) scale(1.22);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -38px) scale(0.9);
+  }
+}
+
+/* ==========================================================================
+   Overlays (Start, Pause, Game Over)
+   ========================================================================== */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(10, 60, 130, 0.72) 0%,
+    rgba(5, 30, 80, 0.85) 100%
+  );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  padding: 20px;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.overlay.hidden {
+  display: none !important;
+}
+
+.overlay-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 4px solid #FFD700;
+  box-shadow:
+    0 0 0 7px rgba(255, 215, 0, 0.25),
+    0 20px 50px rgba(0, 0, 0, 0.4);
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+/* Start Screen */
+.game-title {
+  font-size: 28px;
+  font-weight: 900;
+  background: linear-gradient(90deg, #FF4500, #FF8C00, #FFD700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  margin-bottom: 6px;
+}
+
+.tagline {
+  font-size: 13px;
+  color: #64748b;
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+.overlay-desc {
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 16px;
+}
+
+/* Instructions Card */
+.instructions-box {
+  background: #EBF5FF;
+  border-radius: 10px;
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  color: #1e3a8a;
+  border-left: 4px solid #5BC8FF;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.instructions-box p {
+  margin-bottom: 4px;
+}
+
+.instructions-box p:last-child {
+  margin-bottom: 0;
+}
+
+kbd {
+  background: #ffffff;
+  color: #0284c7;
+  border: 1px solid #7dd3fc;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  padding: 2px 7px;
+  font-size: 11px;
+  font-family: inherit;
+  font-weight: 800;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  width: 100%;
+  padding: 13px 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.btn-primary {
+  background: linear-gradient(to bottom, #FF8C00, #FF6B35);
+  color: #ffffff;
+  box-shadow: 0 6px 0 #C0421A, 0 8px 20px rgba(255, 107, 53, 0.4);
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  background: linear-gradient(to bottom, #FFA033, #FF7B47);
+  box-shadow: 0 7px 0 #C0421A, 0 10px 24px rgba(255, 107, 53, 0.5);
+}
+
+.btn-primary:active {
+  transform: scale(0.96) translateY(3px);
+  box-shadow: 0 2px 0 #C0421A, 0 4px 10px rgba(255, 107, 53, 0.3);
+}
+
+/* Start button entry bounce animation */
+#btn-start {
+  animation: bounce 1s ease 3;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: #334155;
+  box-shadow: 0 4px 0 #cbd5e1;
+  margin-top: 8px;
+}
+
+.btn-secondary:hover {
+  transform: scale(1.05);
+  background: #cbd5e1;
+  box-shadow: 0 5px 0 #b0bec5;
+}
+
+.btn-secondary:active {
+  transform: scale(0.96) translateY(2px);
+  box-shadow: 0 1px 0 #cbd5e1;
+}
+
+.btn-danger {
+  background: linear-gradient(to bottom, #ef4444, #dc2626);
+  color: #ffffff;
+  box-shadow: 0 4px 0 #991b1b, 0 6px 14px rgba(220, 38, 38, 0.35);
+  font-size: 14px;
+  padding: 10px 14px;
+}
+
+.btn-danger:hover {
+  transform: scale(1.03);
+  background: linear-gradient(to bottom, #f87171, #ef4444);
+  box-shadow: 0 5px 0 #991b1b, 0 8px 18px rgba(220, 38, 38, 0.45);
+}
+
+.btn-danger:active {
+  transform: scale(0.96) translateY(2px);
+  box-shadow: 0 1px 0 #991b1b;
+}
+
+/* ==========================================================================
+   Settings Modal & Controls (Plan 4, Sections 5 & 9)
+   ========================================================================== */
+.settings-card {
+  max-width: 360px;
+  padding: 22px 20px;
+}
+
+.settings-card h2 {
+  color: #3b82f6;
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.settings-form {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.settings-col {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.settings-sub-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.volume-value {
+  color: #3b82f6;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.volume-slider {
+  width: 100%;
+  accent-color: #3b82f6;
+  cursor: pointer;
+  height: 6px;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.2s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.2s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .slider {
+  background-color: #3b82f6;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.settings-divider {
+  border: 0;
+  border-top: 1px dashed #cbd5e1;
+  margin: 4px 0;
+}
+
+.settings-reset-section {
+  text-align: center;
+}
+
+.reset-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+/* Toast Notification (Plan 4, Section 9.4) */
+.toast {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.92);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  z-index: 50;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.toast.hidden {
+  opacity: 0;
+  transform: translate(-50%, 15px);
+  pointer-events: none;
+}
+
+/* Pause Screen Card Specifics */
+#overlay-pause .overlay-card {
+  border-color: #5BC8FF;
+  box-shadow:
+    0 0 0 7px rgba(91, 200, 255, 0.25),
+    0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+#overlay-pause h2 {
+  color: #0369a1;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+#btn-resume {
+  background: linear-gradient(to bottom, #34C759, #28A745);
+  box-shadow: 0 6px 0 #1E7E34, 0 8px 20px rgba(52, 199, 89, 0.35);
+}
+
+#btn-resume:hover {
+  transform: scale(1.05);
+  background: linear-gradient(to bottom, #44D769, #30B54F);
+  box-shadow: 0 7px 0 #1E7E34, 0 10px 24px rgba(52, 199, 89, 0.45);
+}
+
+#btn-resume:active {
+  transform: scale(0.96) translateY(3px);
+  box-shadow: 0 2px 0 #1E7E34, 0 4px 10px rgba(52, 199, 89, 0.3);
+}
+
+/* Game Over Screen Card Specifics */
+#overlay-game-over .overlay-card {
+  border-color: #FF3B30;
+  box-shadow:
+    0 0 0 7px rgba(255, 59, 48, 0.25),
+    0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+#overlay-game-over h2 {
+  font-size: 26px;
+  background: linear-gradient(90deg, #DC2626, #EF4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+
+.stats-panel {
+  background: #FFF8E7;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border: 2px solid #FFD700;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  padding: 4px 0;
+  color: #5B2D00;
+}
+
+.stat-row strong {
+  font-size: 18px;
+  color: #5B2D00;
+}
+
+/* New High Score golden shimmer */
+.high-score-banner {
+  margin-top: 10px;
+  padding: 6px;
+  background: linear-gradient(90deg, #FFF176, #FFD700, #FFA000, #FFD700, #FFF176);
+  background-size: 200% auto;
+  animation: shimmer 2s linear infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+@keyframes shimmer {
+  to { background-position: 200% center; }
+}
+
+.high-score-banner.hidden {
+  display: none;
+}
+
+#btn-restart {
+  background: linear-gradient(to bottom, #A855F7, #7C3AED);
+  box-shadow: 0 6px 0 #5B21B6, 0 8px 20px rgba(168, 85, 247, 0.35);
+}
+
+#btn-restart:hover {
+  transform: scale(1.05);
+  background: linear-gradient(to bottom, #B76BF9, #8B5CF6);
+  box-shadow: 0 7px 0 #5B21B6, 0 10px 24px rgba(168, 85, 247, 0.45);
+}
+
+#btn-restart:active {
+  transform: scale(0.96) translateY(3px);
+  box-shadow: 0 2px 0 #5B21B6, 0 4px 10px rgba(168, 85, 247, 0.3);
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
