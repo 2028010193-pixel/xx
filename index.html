@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catch Game</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧺</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game-wrapper">
+    <div id="game-arena" class="game-arena">
+      <!-- Background Scenery Layer (Plan 2: Visual Vibe) -->
+      <div id="sky-bg" class="sky-bg" aria-hidden="true">
+        <!-- White Puffy Clouds -->
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+
+        <!-- Deco Sun -->
+        <svg class="deco-sun" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <!-- Animated rotating rays ring -->
+          <g class="sun-rays">
+            <line x1="40" y1="4"  x2="40" y2="14" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+            <line x1="69" y1="11" x2="62" y2="18" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+            <line x1="76" y1="40" x2="66" y2="40" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+            <line x1="69" y1="69" x2="62" y2="62" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+            <line x1="40" y1="76" x2="40" y2="66" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+            <line x1="11" y1="69" x2="18" y2="62" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+            <line x1="4"  y1="40" x2="14" y2="40" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+            <line x1="11" y1="11" x2="18" y2="18" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+          </g>
+          <!-- Main disc -->
+          <circle cx="40" cy="40" r="22" fill="#FFDD00" stroke="#FFA500" stroke-width="2"/>
+          <!-- Cute face -->
+          <circle cx="34" cy="37" r="2.5" fill="#A0522D"/>
+          <circle cx="46" cy="37" r="2.5" fill="#A0522D"/>
+          <path d="M33 44 Q40 50 47 44" stroke="#A0522D" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+
+        <!-- Deco Rainbow -->
+        <svg class="deco-rainbow" viewBox="0 0 200 110" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10,110 A90,90 0 0,1 190,110" stroke="#FF0000" stroke-width="10" fill="none" opacity="0.7"/>
+          <path d="M18,110 A82,82 0 0,1 182,110" stroke="#FF7F00" stroke-width="10" fill="none" opacity="0.7"/>
+          <path d="M26,110 A74,74 0 0,1 174,110" stroke="#FFFF00" stroke-width="10" fill="none" opacity="0.7"/>
+          <path d="M34,110 A66,66 0 0,1 166,110" stroke="#00BB00" stroke-width="10" fill="none" opacity="0.7"/>
+          <path d="M42,110 A58,58 0 0,1 158,110" stroke="#0000FF" stroke-width="10" fill="none" opacity="0.7"/>
+          <path d="M50,110 A50,50 0 0,1 150,110" stroke="#4B0082" stroke-width="10" fill="none" opacity="0.7"/>
+          <path d="M58,110 A42,42 0 0,1 142,110" stroke="#8B00FF" stroke-width="10" fill="none" opacity="0.7"/>
+        </svg>
+
+        <!-- Crow Silhouettes -->
+        <svg class="crow crow-1" viewBox="0 0 36 16" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18,8 Q10,0 0,4 Q10,6 18,8 Q26,6 36,4 Q26,0 18,8Z" fill="#1a1a2e"/>
+        </svg>
+        <svg class="crow crow-2" viewBox="0 0 28 12" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14,6 Q7,0 0,3 Q7,5 14,6 Q21,5 28,3 Q21,0 14,6Z" fill="#1a1a2e"/>
+        </svg>
+        <svg class="crow crow-3" viewBox="0 0 22 10" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11,5 Q6,0 0,2 Q6,4 11,5 Q16,4 22,2 Q16,0 11,5Z" fill="#1a1a2e"/>
+        </svg>
+      </div>
+
+      <!-- Heads Up Display (HUD) -->
+      <header class="hud" aria-label="Game HUD">
+        <div class="hud-lives" id="hud-lives" aria-label="Lives remaining">❤️❤️❤️</div>
+        <div class="hud-score" id="hud-score">Score: 0</div>
+        <div class="hud-high-score" id="hud-high-score">High: 0</div>
+        <div class="hud-actions">
+          <button id="btn-settings-hud" class="hud-btn" type="button" title="Settings (⚙️)" aria-label="Settings">⚙️</button>
+          <button id="btn-pause" class="hud-btn" type="button" title="Pause game (P / Esc)" aria-label="Pause / Resume">⏸</button>
+        </div>
+      </header>
+
+      <!-- Falling Items Container -->
+      <div id="items-container" class="items-container" aria-hidden="true"></div>
+
+      <!-- Sensory Feedback Layer (Particles, Floating Scores, Ripples) -->
+      <div id="fx-container" class="fx-container" aria-hidden="true"></div>
+
+      <!-- Player Basket -->
+      <div id="basket" class="basket" aria-label="Player basket">
+        <span class="basket-art">🧺</span>
+      </div>
+
+      <!-- Start Screen Overlay (IDLE state) -->
+      <section id="overlay-start" class="overlay active">
+        <div class="overlay-card">
+          <h1 class="game-title">🧺 Catch Game</h1>
+          <p class="tagline">Catch fruits for points, dodge bombs, and don't let fruits drop!</p>
+          <div class="instructions-box">
+            <p><strong>Move:</strong> <kbd>←</kbd> <kbd>→</kbd> or <kbd>A</kbd> <kbd>D</kbd></p>
+            <p><strong>Catch Fruits (🍎 🍊 🍓...):</strong> +10 points</p>
+            <p><strong>Catch Bombs (💣):</strong> −10 points</p>
+            <p><strong>Missed Fruits:</strong> −1 Life (3 total)</p>
+            <p><strong>Pause / Resume:</strong> <kbd>P</kbd> or <kbd>Esc</kbd></p>
+          </div>
+          <div class="button-group">
+            <button id="btn-start" class="btn btn-primary" type="button">▶ Start Game</button>
+            <button id="btn-settings-start" class="btn btn-secondary" type="button">⚙️ Settings</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pause Screen Overlay (PAUSED state) -->
+      <section id="overlay-pause" class="overlay hidden">
+        <div class="overlay-card">
+          <h2>⏸ Game Paused</h2>
+          <p class="overlay-desc">Catch your breath!</p>
+          <div class="button-group">
+            <button id="btn-resume" class="btn btn-primary" type="button">▶ Resume</button>
+            <button id="btn-settings-pause" class="btn btn-secondary" type="button">⚙️ Settings</button>
+            <button id="btn-restart-pause" class="btn btn-secondary" type="button">↺ Restart</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Game Over Screen Overlay (GAME_OVER state) -->
+      <section id="overlay-game-over" class="overlay hidden">
+        <div class="overlay-card">
+          <h2>💥 Game Over!</h2>
+          <p id="game-over-reason" class="overlay-desc">You ran out of lives!</p>
+          <div class="stats-panel">
+            <div class="stat-row">
+              <span>Final Score:</span>
+              <strong id="final-score">0</strong>
+            </div>
+            <div class="stat-row">
+              <span>High Score:</span>
+              <strong id="best-score">0</strong>
+            </div>
+            <p id="high-score-banner" class="high-score-banner hidden">🏆 New High Score!</p>
+          </div>
+          <div class="button-group">
+            <button id="btn-restart" class="btn btn-primary" type="button">↺ Play Again</button>
+            <button id="btn-settings-game-over" class="btn btn-secondary" type="button">⚙️ Settings</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Modal Overlay (Plan 4, Sections 5 & 9) -->
+      <section id="overlay-settings" class="overlay hidden" aria-modal="true" role="dialog" aria-labelledby="settings-heading">
+        <div class="overlay-card settings-card">
+          <h2 id="settings-heading">⚙️ Game Settings</h2>
+          <p class="overlay-desc">Customize your game preferences</p>
+          
+          <div class="settings-form">
+            <!-- Sound Effects Toggle -->
+            <div class="settings-row">
+              <span class="settings-label">Sound Effects</span>
+              <label class="switch" for="setting-sound">
+                <input type="checkbox" id="setting-sound" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <!-- Background Music Toggle -->
+            <div class="settings-row">
+              <span class="settings-label">Background Music</span>
+              <label class="switch" for="setting-music">
+                <input type="checkbox" id="setting-music" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <!-- Volume Slider -->
+            <div class="settings-row settings-col">
+              <div class="settings-sub-row">
+                <span class="settings-label">Master Volume</span>
+                <span id="volume-display" class="volume-value">70%</span>
+              </div>
+              <input type="range" id="setting-volume" min="0" max="100" value="70" class="volume-slider">
+            </div>
+
+            <hr class="settings-divider">
+
+            <!-- Reset Data Section (Plan 4, Section 9) -->
+            <div class="settings-reset-section">
+              <p class="reset-desc">Clear high score and saved settings:</p>
+              <button id="btn-reset-data" class="btn btn-danger" type="button">🗑️ Reset Saved Data</button>
+            </div>
+          </div>
+
+          <div class="button-group" style="margin-top: 14px;">
+            <button id="btn-close-settings" class="btn btn-primary" type="button">Done</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Toast Notification (Plan 4, Section 9.4) -->
+      <div id="toast-notification" class="toast hidden" role="status" aria-live="polite"></div>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
